@@ -4,45 +4,67 @@ NewsModel newsModelFromJson(String str) => NewsModel.fromJson(json.decode(str));
 String newsModelToJson(NewsModel data) => json.encode(data.toJson());
 class NewsModel {
   String status;
-  List<Datum> data;
+  int totalResults;
+  List<Article> articles;
+
   NewsModel({
-  required this.status,
-  required this.data,
+    required this.status,
+    required this.totalResults,
+    required this.articles,
   });
+
   factory NewsModel.fromJson(Map<String, dynamic> json) => NewsModel(
     status: json["status"],
-    data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
+    totalResults: json["totalResults"],
+    articles: List<Article>.from(
+        json["articles"].map((x) => Article.fromJson(x))),
   );
+
   Map<String, dynamic> toJson() => {
     "status": status,
-    "data": List<dynamic>.from(data.map((x) => x.toJson())),
+    "totalResults": totalResults,
+    "articles": List<dynamic>.from(articles.map((x) => x.toJson())),
   };
 }
-class Datum {
-  int id;
-  String email;
-  String firstName;
-  String lastName;
-  String avatar;
-  Datum({
-    required this.id,
-    required this.email,
-    required this.firstName,
-    required this.lastName,
-    required this.avatar,
+class Article {
+  Map<String, dynamic> source;
+  String author;
+  String title;
+  String description;
+  String url;
+  String urlToImage;
+  String publishedAt;
+  String content;
+
+  Article({
+    required this.source,
+    required this.author,
+    required this.title,
+    required this.description,
+    required this.url,
+    required this.urlToImage,
+    required this.publishedAt,
+    required this.content,
   });
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-    id: json["id"],
-    email: json["email"],
-    firstName: json["first_name"],
-    lastName: json["last_name"],
-    avatar: json["avatar"],
+
+  factory Article.fromJson(Map<String, dynamic> json) => Article(
+    source: json["source"],
+    author: json["author"] ?? "",
+    title: json["title"] ?? "",
+    description: json["description"] ?? "",
+    url: json["url"] ?? "",
+    urlToImage: json["urlToImage"] ?? "",
+    publishedAt: json["publishedAt"] ?? "",
+    content: json["content"] ?? "",
   );
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "email": email,
-    "first_name": firstName,
-    "last_name": lastName,
-    "avatar": avatar,
+    "source": source,
+    "author": author,
+    "title": title,
+    "description": description,
+    "url": url,
+    "urlToImage": urlToImage,
+    "publishedAt": publishedAt,
+    "content": content,
   };
 }

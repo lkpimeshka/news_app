@@ -9,7 +9,7 @@ class NewsProvider with ChangeNotifier {
   Future<void> fetchNewsData() async {
     try {
       final response = await http.get(Uri.parse(
-          'https://run.mocky.io/v3/4ff191af-358d-427c-bc71-5e6031817dec'));
+          'https://newsapi.org/v2/everything?q=tesla&from=2023-12-26&sortBy=publishedAt&apiKey=cdfcaf6c8f2547dca324a80585d4d12e'));
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
         _news = NewsModel.fromJson(data);
