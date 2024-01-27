@@ -13,13 +13,8 @@ class NewsDetailPage extends StatelessWidget {
       return '';
     }
 
-    // Parse the string to DateTime
     final dateTime = DateTime.parse(publishedAt);
-
-    // Format the DateTime to the desired format
     final formattedDate = DateFormat('MMM d, y').format(dateTime);
-
-    // Combine formatted date with author
     if (author != null && author.trim().isNotEmpty) {
       return 'Published on $formattedDate by $author';
     } else {
@@ -31,6 +26,8 @@ class NewsDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
         title: const Text('News Detail'),
       ),
       body: Padding(
@@ -49,7 +46,7 @@ class NewsDetailPage extends StatelessWidget {
             Image.network(
               article.urlToImage ?? '',
               width: double.infinity,
-              height: 200.0, // Adjust the height as needed
+              // height: 200.0,
               fit: BoxFit.cover,
             ),
             const SizedBox(height: 16.0),
@@ -80,7 +77,7 @@ class NewsDetailPage extends StatelessWidget {
               },
               child: Row(
                 children: [
-                  Icon(Icons.link, color: Colors.blue),
+                  const Icon(Icons.link, color: Colors.blue),
                   const SizedBox(width: 8.0),
                   Expanded(
                     child: Text(

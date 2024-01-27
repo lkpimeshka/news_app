@@ -4,6 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:news/model/news_model.dart';
 import 'news_detail_page.dart';
+import 'package:news/screen/news_category.dart';
+import 'package:news/screen/sort_news.dart';
+import 'package:news/screen/wall_street_journal.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,34 +15,21 @@ class HomeScreen extends StatefulWidget {
 }
 class _HomeScreenState extends State<HomeScreen> {
 
+  TextEditingController _searchController = TextEditingController();
+
   @override
   void initState() {
-    Provider.of<NewsProvider>(context, listen: false).fetchNewsData();
+    Provider.of<NewsProvider>(context, listen: false).fetchNewsData('tesla');
     super.initState();
   }
-
-  // String _truncateTitle(String? title) {
-  //   const int maxTitleLength = 50;
-  //
-  //   if (title == null || title.length <= maxTitleLength) {
-  //     return title ?? '';
-  //   } else {
-  //     return '${title.substring(0, maxTitleLength)}...';
-  //   }
-  // }
 
   String _formatDate(String? publishedAt, String? author) {
     if (publishedAt == null) {
       return '';
     }
 
-    // Parse the string to DateTime
     final dateTime = DateTime.parse(publishedAt);
-
-    // Format the DateTime to the desired format
     final formattedDate = DateFormat('MMM d, y').format(dateTime);
-
-    // Combine formatted date with author
     if (author != null && author.trim().isNotEmpty) {
       return '$formattedDate by $author';
     } else {
@@ -47,10 +37,271 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void _showSearchBottomSheet(BuildContext context) {
+
+    showModalBottomSheet(
+      elevation: 5,
+      isScrollControlled: true,
+      context: context,
+      builder: (_) => Container(
+        padding: EdgeInsets.only(
+          top: 30,
+          left: 15,
+          right: 15,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 50,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            TextField(
+              controller: _searchController,
+              decoration: const InputDecoration(
+                hintText: "Enter search key",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () async {
+                await _searchData(_searchController.text);
+                _searchController.text = "";
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.all(16),
+                textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              child: const Text("Search"),
+            ),
+          ],
+        ),
+      ),
+    );
+
+  }
+
+  Future<void> _searchData(String searchKeyword) async {
+    try {
+      await Provider.of<NewsProvider>(context, listen: false)
+          .fetchNewsData(searchKeyword);
+    } catch (error) {
+      print('Error searching news: $error');
+    }
+  }
+
+  void _showFilterByCategoryMenu(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => Container(
+        width: double.infinity,
+        padding: EdgeInsets.only(
+          top: 30,
+          left: 15,
+          right: 15,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 50,
+        ),
+        child: Wrap(
+          alignment: WrapAlignment.spaceAround,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                _navigateToCategoryNewsPage(context, 'business');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                foregroundColor: Colors.white,
+              ),
+              child: Text('Business'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _navigateToCategoryNewsPage(context, 'entertainment');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                foregroundColor: Colors.white,
+              ),
+              child: Text('Entertainment'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _navigateToCategoryNewsPage(context, 'general');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                foregroundColor: Colors.white,
+              ),
+              child: Text('General'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _navigateToCategoryNewsPage(context, 'health');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                foregroundColor: Colors.white,
+              ),
+              child: Text('Health'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _navigateToCategoryNewsPage(context, 'science');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                foregroundColor: Colors.white,
+              ),
+              child: Text('Science'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _navigateToCategoryNewsPage(context, 'sports');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                foregroundColor: Colors.white,
+              ),
+              child: Text('Sports'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _navigateToCategoryNewsPage(context, 'technology');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                foregroundColor: Colors.white,
+              ),
+              child: Text('Technology'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _navigateToCategoryNewsPage(BuildContext context, String category) {
+    // print(category);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => NewsCategory(category: category),
+      ),
+    );
+  }
+
+  void _showSortByMenu(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => Container(
+        width: double.infinity,
+        padding: EdgeInsets.only(
+          top: 30,
+          left: 15,
+          right: 15,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 50,
+        ),
+        child: Wrap(
+          alignment: WrapAlignment.spaceAround,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                _navigateToSortPage(context, 'relevancy');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                foregroundColor: Colors.white,
+              ),
+              child: Text('Relevancy'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _navigateToSortPage(context, 'popularity');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                foregroundColor: Colors.white,
+              ),
+              child: Text('Popularity'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _navigateToSortPage(context, 'publishedAt');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                foregroundColor: Colors.white,
+              ),
+              child: Text('Published At'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _navigateToSortPage(BuildContext context, String sortBy) {
+    // print(sortBy);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => NewsSort(sortBy: sortBy),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
+        title: const Text('WW News'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            color: Colors.white,
+            onPressed: () {
+              _showSearchBottomSheet(context);
+            },
+          ),
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.menu),
+            color: Colors.white,
+            itemBuilder: (context) => [
+              const PopupMenuItem<String>(
+                value: 'wallStreetJournal',
+                child: Text('Wall Street Journal'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'categories',
+                child: Text('Categories By'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'sort',
+                child: Text('Sort By'),
+              ),
+            ],
+            onSelected: (value) {
+              if (value == 'categories') {
+                _showFilterByCategoryMenu(context);
+              } else if (value == 'sort') {
+                _showSortByMenu(context);
+              } else if (value == 'wallStreetJournal') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => WallStreetJournal()),
+                );
+              }
+            },
+          ),
+        ],
+      ),
         body: Center(
         child: Consumer<NewsProvider>(
         builder: (context, newsProvider, child) {
@@ -92,8 +343,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Text(
                       "${newsProvider.news?.articles.elementAt(index).title}",
-                      // "${_truncateTitle(newsProvider.news?.articles.elementAt(index).title)}",
-                      maxLines: 3, // Limit to 2 lines
+                      maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                           color: Colors.black,

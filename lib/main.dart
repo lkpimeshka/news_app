@@ -15,7 +15,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => NewsProvider()),
       ],
       child: MaterialApp(
-        title: 'News App',
+        debugShowCheckedModeBanner: false,
+        title: 'WW News',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
